@@ -15,8 +15,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'ENTe',
       theme: ThemeData(
-          primarySwatch: Colors.green,
-          fontFamily: 'Inter'
+        primarySwatch: Colors.green,
+        fontFamily: 'Inter',
       ),
       home: const MyHomePage(title: 'ENTe'),
     );
@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
   final String title;
 
   @override
@@ -52,19 +51,11 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
-
     _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
       if (_pageController.page == 2) {
-        _pageController.animateToPage(
-          0,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeIn,
-        );
+        _pageController.animateToPage(0, duration: Duration(milliseconds: 300), curve: Curves.easeIn);
       } else {
-        _pageController.nextPage(
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeIn,
-        );
+        _pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeIn);
       }
     });
   }
@@ -129,7 +120,6 @@ class _MyHomePageState extends State<MyHomePage> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            // Banner Slider
             Container(
               height: 200,
               child: PageView(
@@ -141,7 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            // Filter Dropdowns
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -190,11 +179,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            // Filtered Items List
             ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              padding: const EdgeInsets.all(0),
               itemCount: filteredItems.length,
               itemBuilder: (context, index) {
                 final item = filteredItems[index];
@@ -231,34 +218,32 @@ class _MyHomePageState extends State<MyHomePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children:[
-                                    Text(
-                                      item['title']!,
-                                      style: const TextStyle(
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    item['title']!,
+                                    style: const TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.location_on,
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.location_on, color: Colors.grey),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        item['location'] ?? "Location unknown",
+                                        style: const TextStyle(
+                                          fontSize: 16.0,
                                           color: Colors.grey,
                                         ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          item['location'] ?? "Location unknown",
-                                          style: const TextStyle(
-                                            fontSize: 16.0,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ]
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     item['type'] ?? "Type unknown",
@@ -267,8 +252,26 @@ class _MyHomePageState extends State<MyHomePage> {
                                       color: Colors.grey,
                                     ),
                                   ),
+                                  InkWell(
+                                    onTap: () {
+                                      _onItemTapped(1); // Navigate to Bookmark Page
+                                    },
+                                    child: Row(
+                                      children: const [
+                                        Icon(Icons.bookmark, color: Colors.grey),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          "Bookmark",
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ],
-                              ),
+                              )
                             ],
                           ),
                         ),
