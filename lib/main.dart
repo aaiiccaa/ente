@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dashboard.dart'; // Pastikan ini mengarah ke lokasi file dashboard yang benar
+import 'login.dart'; // Pastikan ini mengarah ke lokasi file login yang benar
 
 void main() {
   runApp(const WelcomeApp());
@@ -32,10 +32,10 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-    // Menunda navigasi ke dashboard selama 3 detik
+    // Menunda navigasi ke login selama 3 detik
     Future.delayed(Duration(seconds: 3), () {
       if (mounted) { // Pastikan widget masih dalam tree
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const MyHomePage(title: 'ENTe')));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
       }
     });
   }
@@ -56,6 +56,3 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 }
-
-
-
