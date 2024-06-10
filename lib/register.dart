@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'auth_service.dart'; // Pastikan untuk membuat dan mengimpor auth_service.dart
 import 'login.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -12,6 +13,9 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacity;
+  final TextEditingController nameController = TextEditingController(); // Tambahkan controller untuk nama
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -31,6 +35,23 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _register() async {
+    final name = nameController.text; // Ambil input nama
+    final email = emailController.text;
+    final password = passwordController.text;
+
+    try {
+      final result = await AuthService().register(name, email, password); // Kirim nama ke AuthService
+      print('Registration successful: ${result['token']}');
+      // Save token and navigate to login screen or dashboard
+      Navigator.pushReplacementNamed(context, '/login');
+    } catch (e) {
+      print('Registration failed: $e');
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Registration failed: $e')));
+    }
   }
 
   @override
@@ -75,16 +96,14 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                       ),
                     ),
                     SizedBox(height: 24),
-                    buildTextField('Email'),
+                    buildTextField('Name', controller: nameController), // Tambahkan field nama
                     SizedBox(height: 16),
-                    buildTextField('Password', obscureText: true),
+                    buildTextField('Email', controller: emailController),
                     SizedBox(height: 16),
-                    buildTextField('Confirm Password', obscureText: true),
+                    buildTextField('Password', controller: passwordController, obscureText: true),
                     SizedBox(height: 24),
                     ElevatedButton(
-                      onPressed: () {
-                        // Registration logic
-                      },
+                      onPressed: _register,
                       child: Text('Register'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
@@ -107,8 +126,9 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     );
   }
 
-  Widget buildTextField(String hint, {bool obscureText = false}) {
+  Widget buildTextField(String hint, {bool obscureText = false, required TextEditingController controller}) {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
