@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'service/auth_service.dart'; // Pastikan untuk membuat dan mengimpor auth_service.dart
 import 'register.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -9,9 +10,12 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacity;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -33,6 +37,21 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     super.dispose();
   }
 
+  void _login() async {
+    final email = emailController.text;
+    final password = passwordController.text;
+
+    try {
+      final result = await AuthService().login(email, password);
+      print('Login successful: ${result['token']}');
+      // Save token and navigate to next screen
+      Navigator.pushReplacementNamed(context, '/dashboard');
+    } catch (e) {
+      print('Login failed: $e');
+      // Show error message
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +64,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         ),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
             child: Container(
               padding: EdgeInsets.all(16.0),
               decoration: BoxDecoration(
@@ -75,19 +95,19 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       ),
                     ),
                     SizedBox(height: 24),
-                    buildTextField('Email'),
+                    buildTextField('Email', controller: emailController),
                     SizedBox(height: 16),
-                    buildTextField('Password', obscureText: true),
+                    buildTextField('Password',
+                        controller: passwordController, obscureText: true),
                     SizedBox(height: 24),
                     ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/dashboard');
-                      },
+                      onPressed: _login,
                       child: Text('Log In'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -105,8 +125,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget buildTextField(String hint, {bool obscureText = false}) {
+  Widget buildTextField(String hint,
+      {bool obscureText = false, required TextEditingController controller}) {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
@@ -128,13 +150,13 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           TextSpan(text: "Don't have an account? "),
           TextSpan(
             text: 'Register here',
-            style: TextStyle(color: Colors.red, decoration: TextDecoration.underline),
-            recognizer: TapGestureRecognizer()..onTap = () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RegisterScreen())
-              );
-            },
+            style: TextStyle(
+                color: Colors.red, decoration: TextDecoration.underline),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => RegisterScreen()));
+              },
           ),
         ],
       ),

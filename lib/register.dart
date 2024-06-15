@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'auth_service.dart'; // Pastikan untuk membuat dan mengimpor auth_service.dart
+import 'service/auth_service.dart'; // Pastikan untuk membuat dan mengimpor auth_service.dart
 import 'login.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -10,12 +10,14 @@ class RegisterScreen extends StatefulWidget {
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProviderStateMixin {
+class _RegisterScreenState extends State<RegisterScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacity;
-  final TextEditingController nameController = TextEditingController(); // Tambahkan controller untuk nama
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -38,19 +40,27 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   }
 
   void _register() async {
-    final name = nameController.text; // Ambil input nama
     final email = emailController.text;
     final password = passwordController.text;
+    final confirmPassword = confirmPasswordController.text;
+
+    if (password != confirmPassword) {
+      // Show error message if passwords do not match
+      print('Passwords do not match');
+      return;
+    }
 
     try {
-      final result = await AuthService().register(name, email, password); // Kirim nama ke AuthService
+      print('Eksekusi auth service');
+      final result = await AuthService().register(
+          'Your Name', email, password); // Add your name or create a name field
+      print('hasil response successful: ${result}');
       print('Registration successful: ${result['token']}');
       // Save token and navigate to login screen or dashboard
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacementNamed(context, '/dashboard');
     } catch (e) {
       print('Registration failed: $e');
       // Show error message
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Registration failed: $e')));
     }
   }
 
@@ -66,7 +76,8 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
         ),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
             child: Container(
               padding: EdgeInsets.all(16.0),
               decoration: BoxDecoration(
@@ -96,11 +107,14 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                       ),
                     ),
                     SizedBox(height: 24),
-                    buildTextField('Name', controller: nameController), // Tambahkan field nama
-                    SizedBox(height: 16),
                     buildTextField('Email', controller: emailController),
                     SizedBox(height: 16),
-                    buildTextField('Password', controller: passwordController, obscureText: true),
+                    buildTextField('Password',
+                        controller: passwordController, obscureText: true),
+                    SizedBox(height: 16),
+                    buildTextField('Confirm Password',
+                        controller: confirmPasswordController,
+                        obscureText: true),
                     SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: _register,
@@ -108,7 +122,8 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -126,7 +141,8 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     );
   }
 
-  Widget buildTextField(String hint, {bool obscureText = false, required TextEditingController controller}) {
+  Widget buildTextField(String hint,
+      {bool obscureText = false, required TextEditingController controller}) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
@@ -150,13 +166,13 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
           TextSpan(text: "Already have an account? "),
           TextSpan(
             text: 'Log in',
-            style: TextStyle(color: Colors.red, decoration: TextDecoration.underline),
-            recognizer: TapGestureRecognizer()..onTap = () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen())
-              );
-            },
+            style: TextStyle(
+                color: Colors.red, decoration: TextDecoration.underline),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()));
+              },
           ),
         ],
       ),
