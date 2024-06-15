@@ -1,3 +1,4 @@
+import 'package:ente/dashboard_restaurant.dart';
 import 'package:flutter/material.dart';
 import 'login.dart'; // Pastikan ini mengarah ke lokasi file login yang benar
 
@@ -35,7 +36,8 @@ class _WelcomePageState extends State<WelcomePage> {
     // Menunda navigasi ke login selama 3 detik
     Future.delayed(Duration(seconds: 3), () {
       if (mounted) { // Pastikan widget masih dalam tree
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
+        // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const DashBoardRestaurant()));
       }
     });
   }
