@@ -314,8 +314,22 @@ class _DashBoardRestaurantState extends State<DashBoardRestaurant> {
                               restaurant.id.toString())
                           .id
                       : null;
-
-                 
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailPage(
+                            title: restaurant.name,
+                            image: restaurant.urlPhoto,
+                            location: restaurant.location,
+                            type: restaurant.type,
+                            userId: '1',
+                            warungmakanId: restaurant.id.toString(),
+                          ),
+                        ),
+                      );
+                    },              
                     child: Card(
                       margin: const EdgeInsets.all(8),
                       child: Column(
